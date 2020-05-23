@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Javascript Console</title>
+    <script type="text/javascript">
+      let qs = function(n){return document.querySelector(n);};
+      let out = null;
+      let geval = eval;
+      function load(){
+	out = qs("#out");
+        window.scrollTo(0,0);
+      }
+      function run(){        
+        let code = qs("#in").value;
+        qs("#in").value ="";
+        out.innerHTML += "&gt; " + code + "<br>";
+        try{
+          out.innerHTML += geval(code) + "<br>\n";
+        } catch(e) {
+          out.innerHTML += '<span class="error">' + e +'</span><br>\n';
+        }
+        window.scrollTo(0,out.scrollHeight-100);
+      }
+      function clrscr() {
+        out.innerHTML = "";
+      }
+    </script>
+    <style>
+      .UI {
+        background: transparent;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .error {
+        color: #cc0000;
+      }
+      button {
+        background-color: white;
+        border: 3px solid black;
+        color: black;
+      }
+      .input {
+	  border:none; width:85%
+      }
+      @media (prefers-color-scheme: dark) {
+        .UI {
+         color: #cccccc;
+         background-color: black;
+        }
+        button {
+          border: 3px solid #cccccc;
+          color: #cccccc;
+        }
+      }
+    </style>
+  </head>
+  <body onload="load();" class="UI">
+    <div>
+      <div id="out"></div>
+      <span style="vertical-align: top">&gt;</span>
+      <textarea class="UI input" rows="4" id="in" onchange="" /></textarea> <br>
+      <button type="button" id="run" onclick="run()" class="UI">Run!</button>
+      <button type="button" id="clear" onclick="clrscr()" class="UI">Clear</button>
+    </div>
+  </body>
+</html>

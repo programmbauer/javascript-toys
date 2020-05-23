@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+  </head>
+  <body onload="speechSynthesis.getVoices()">
+    <script>
+      function readPhonetic(){
+      var original = document.getElementById("original");
+      var phonetic = document.getElementById("phonetic");
+      var text = "";
+      for(var letter of original.value) {
+      if(letter == "A" || letter == "a"){text += "Alfa ";}
+      if(letter == "B" || letter == "b"){text += "Bravo ";}
+      if(letter == "C" || letter == "c"){text += "Charlie ";}
+      if(letter == "D" || letter == "d"){text += "Delta ";}
+      if(letter == "E" || letter == "e"){text += "Echo ";}
+      if(letter == "F" || letter == "f"){text += "Foxtrott ";}
+      if(letter == "G" || letter == "g"){text += "Golf ";}
+      if(letter == "H" || letter == "h"){text += "Hotel ";}
+      if(letter == "I" || letter == "i"){text += "India ";}
+      if(letter == "J" || letter == "j"){text += "Juliett ";}
+      if(letter == "K" || letter == "k"){text += "Kilo ";}
+      if(letter == "L" || letter == "l"){text += "Lima ";}
+      if(letter == "M" || letter == "m"){text += "Mike ";}
+      if(letter == "N" || letter == "n"){text += "November ";}
+      if(letter == "O" || letter == "o"){text += "Oscar ";}
+      if(letter == "P" || letter == "p"){text += "Papa ";}
+      if(letter == "Q" || letter == "q"){text += "Quebec ";}
+      if(letter == "R" || letter == "r"){text += "Romeo ";}
+      if(letter == "S" || letter == "s"){text += "Sierra ";}
+      if(letter == "T" || letter == "t"){text += "Tango ";}
+      if(letter == "U" || letter == "u"){text += "Uniform ";}
+      if(letter == "V" || letter == "v"){text += "Victor ";}
+      if(letter == "W" || letter == "w"){text += "Whiskey ";}
+      if(letter == "X" || letter == "x"){text += "X-Ray ";}
+      if(letter == "Y" || letter == "y"){text += "Yankee ";}
+      if(letter == "Z" || letter == "z"){text += "Zulu ";}
+      if(letter == " " || letter == "."){text += ". ";}
+      if(letter >= "0" && letter <= "9"){text += letter + " ";}
+      }
+      phonetic.innerHTML = text;
+      utterText(text);
+      }
+      function utterText(text, speed=0.8, voice=1){
+      var synth = window.speechSynthesis;
+      synth.getVoices();
+      var voices = synth.getVoices();
+      var utterThis = new SpeechSynthesisUtterance(text);
+      utterThis.voice = voices[voice];
+      utterThis.rate = speed;
+      synth.speak(utterThis);
+      }
+      function song2(rate=0.6) { 
+      utterText("a b c d e f g",rate);
+      utterText("h i j k l m n o p",rate);
+      utterText("q r s",rate);
+      utterText("t u v",rate);
+      utterText("w x",rate);
+      utterText("y & z",rate);
+      utterText("Now I know my abc. Next time won't you sing with me?",rate);
+      }
+    </script>
+    <h1>ITU phonetic alphabet</h1>
+    <textarea cols="80" id="original">
+abcd.efgh.ij.klmn.opqr.stuv.wxyz
+    </textarea><br>
+    <button onclick="readPhonetic()">Convert text to phonetic alphabet and read it aloud</button>
+    <p id="phonetic"></p>
+  </body>
+</html>

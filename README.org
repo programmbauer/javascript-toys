@@ -1,0 +1,10 @@
+#+title: javascript-toys
+
+This collection includes small, fun javascript programs.
+
+* JavascriptConsole.html
+This is a minimalistic javascript REPL (using the browser's ~eval~ function). The REPL works on mobile phones. A simple dark mode is available. There's not much more to say about it.
+
+* PhoneticAlphabet.html
+
+This file can be used to convert text to the NATO / ITU phonetic alphabet and read to the user by using the Web Speech API.
