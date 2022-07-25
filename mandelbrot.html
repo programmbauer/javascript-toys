@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      canvas {image-rendering: pixelated;}
+      body {background-color: black;}
+      button {//background-color: black;
+	      border-color: violet;
+	      font-color: violet;}
+    </style>
+    <script>
+      "use strict";
+
+      //variables for the canvas and the corresponding context object
+      let mc = 0;
+      let ctx = 0;
+
+      //configure the viewport
+      let start_x = -1.4036;
+      let start_y = -0.2;
+      let zoom = 0.005;
+      let num_iter = 250;
+
+      //these three arrays are explained in initializeCanvas
+      let c = [];
+      let z_n = [];
+      let iterations = [];
+
+      //gratuitous global state for rendering smooth animations
+      let animation = [];
+      let nextFrame = 0;
+      
+      function initializeCanvas(){
+	  //performs some general preparations. Should be called before drawImage() is called
+	  //for the  first time
+	  mc = document.querySelector("#mandelbrot-canvas");
+	  ctx = mc.getContext("2d");
+
+
+	  //define three 2d arrays with a value for each pixel of the canvas:
+	  //1. c contains the complex number corrensponding to the pixel
+	  c = Array(mc.width);
+	  for (let x = 0; x < c.length; x++) {
+	      c[x] = Array(mc.width);
+	  }
+	  //2. z_n contains the nth value of the sequence z_n+1 = z_n^2 + c
+	  z_n = Array(mc.width);
+	  for (let x = 0; x < z_n.length; x++) {
+	      z_n[x] = Array(mc.width);
+	  }
+	  //3. iterations stores the first n, such that |z_n| > 1000
+	  iterations = Array(mc.width);
+	  for (let col = 0; col < iterations.length; col++) {
+	      iterations[col] = Array(mc.width);
+	  }
+
+	  ctx.putImageData(drawImage(start_x, start_y, zoom, num_iter),0,0);
+	  console.log("success");
+      }
+
+
+      async function animateRealtime() {
+	  zoom *= 0.95;
+	  start_y *= 0.95;
+	  let sleep = Sleep(75);
+	  ctx.putImageData(drawImage(start_x, start_y, zoom, num_iter),0,0);
+	  await(sleep);
+	  window.requestAnimationFrame(animateRealtime);
+      }
+      
+      function recordAnimation(frames = 30) {
+	  //record frames and store them into the animation array
+	  let anim = [];
+	  for(let frame = 0; frame<frames;frame++){
+	      anim.push(drawImage(start_x, start_y, zoom, num_iter));
+	      zoom *= 0.95;
+	      start_y *= 0.95;
+	      console.log("recording frame " + frame);
+	  }
+	  
+	  animation = anim;
+      }
+
+      
+      async function playAnimation() {
+	  //play back the animation frames stored in the animation array
+	  let sleep = Sleep(75);
+	  ctx.putImageData(animation[nextFrame],0,0);
+	  await(sleep);
+	  nextFrame +=1;
+	  if (animation.length > nextFrame) {
+	      window.requestAnimationFrame(playAnimation);
+	  }else{
+	      window.requestAnimationFrame(()=>0);
+	  }
+      }
+      
+      function drawImage(start_x, start_y, zoom, num_iter){
+	  //generate a single. returns an imageData object that can be drawn on the canva
+	  //start_x and start_y define the complex number corresponding to the top left
+	  //corner of the canvas. zoom defines scaling, num_iter is the number of iterations
+	  //of the Mandelbrot sequence that is computed for each pixel.
+
+	  
+	  //initialize c, z_n, iterations
+	  for (let x=0; x<c.length;x++) {
+	      for (let y=0;y<c[x].length; y++){
+		  c[x][y] = [start_x + zoom*x, start_y + zoom*y];
+	      }
+	  }
+	  for (let x of z_n) {
+	      x.fill([0,0]);
+	  }
+	  for (let x of iterations) {
+	      x.fill(0);
+	  }
+
+	  //compute 100 iterations of the sequence
+	  for(let n = 0; n<num_iter; n++) {
+	      //if(n%10==0) console.log("Iteration " + n);
+	      for(let x = 0; x < mc.width; x += 1) {
+		  for(let y = 0; y < mc.height; y +=1) {
+		      if(iterations[x][y] > 0) continue;
+		      let cr = c[x][y][0];
+		      let ci = c[x][y][1];
+		      let zr = z_n[x][y][0];
+		      let zi = z_n[x][y][1];
+		      z_n[x][y] = [(zr*zr-zi*zi)+cr,
+				   (2*zr*zi)+ci];
+		      zr = z_n[x][y][0];
+		      zi = z_n[x][y][1];
+		      let absolute = Math.sqrt(zr*zr + zi*zi);
+		      if(iterations[x][y]==0 && absolute >= 1000) {
+			  iterations[x][y] = n;
+		      }
+		  }
+	      }
+	  }
+	  //generate image data to be drawn onto the canvas
+	  let imgData = ctx.createImageData(mc.width, mc.height);
+	  for(let x = 0; x < mc.width; x++) {
+	      for(let y = 0; y < mc.height; y++) {
+		  let i = (x + y*mc.width)*4;
+		  imgData.data[i] = (iterations[x][y]*parseInt(256/num_iter))%256;
+		  imgData.data[i+1] = 0;
+		  imgData.data[i+2] = (iterations[x][y]*parseInt(288/num_iter))%256;
+		  imgData.data[i+3] = 255;
+	      }
+	  }
+	  return imgData;
+      }
+
+      function Sleep(milliseconds) {
+	  return new Promise(resolve => setTimeout(resolve, milliseconds));
+      }
+    </script>
+  </head>
+  <body onLoad="initializeCanvas()">
+    <!-- height and width of the canvas are THE major factor for performance. Use smaller values
+	 and scale up via the size defined in the STYLE as needed.-->
+    <canvas id="mandelbrot-canvas" width="200" height="200" style="height: 800px; width: 800px"></canvas>
+      <p><button onClick="animateRealtime()">Play!</button>
+  </body>
+</html>
