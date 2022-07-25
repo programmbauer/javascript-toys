@@ -3,7 +3,7 @@
 This collection includes small, fun javascript programs.
 
 * mandelbrot.html
-This file contains a naive visualization of the Mandelbrot set. You can open the file and hit the Play button to see a zoom flight through the visualization at an "impressive" 200x200 pixels and ~ 13 fps. You can edit various variables in the file to change the resolution, update rate and position of the rendered view. Additionally you can familiarize yourself with the ~recordAnimation~ and ~playAnimation~ function to render frames ahead of time and produce animations like the example below:
+This file contains a naive visualization of the Mandelbrot set. You can open the file and hit the Play button to see a zoom flight through the visualization at an "impressive" 200x200 pixels and ~ 13 fps. You can edit various variables in the file to change the resolution, update rate and position of the rendered view. Additionally you can familiarize yourself with the ~recordAnimation~ and ~playAnimation~ functions to render frames ahead of time and produce animations like the example below:
 
 [[media/mandelbrot.gif]]
 
